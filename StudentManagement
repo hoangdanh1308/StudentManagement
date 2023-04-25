@@ -1,0 +1,238 @@
+#include <stdio.h>
+#include <string>
+#include <cstring>
+#include <stdint.h>
+#include <iostream>
+#include <vector>
+using namespace std;
+typedef enum Sex{
+    MALE,
+    FEMALE
+};
+typedef enum Classification{
+    EXCELLENT,
+    GOOD,
+    AVERAGE,
+    WEAK
+};
+class Student{
+    private:
+        uint8_t id;
+        string name;
+        uint8_t age;
+        Sex sex;
+        float mathScore;
+        float physicalScore;
+        float chemistryScore;
+        float averageScore;
+        Classification classification;
+    public:
+        Student();
+        void setStudent();
+        void setSex();
+        string getSex();
+        uint8_t getID();
+        string getName();
+        float getAverageScore();
+        string getClassification();
+        void getInformationStudent();
+};
+Student::Student(){
+    static uint8_t coutID = 10;
+    this->id = coutID;
+    coutID++;
+    this->name = " ";
+    this->age = 0;
+    this->sex = MALE;
+    this->mathScore = 0;
+    this->physicalScore = 0;
+    this->chemistryScore = 0;
+    this->averageScore = 0;
+    this->classification = WEAK;
+}
+uint8_t numSex;
+void Student::setSex(){
+    printf("(number 1:Male\nNumber 2:Female)\t\nenter your gender:\n");
+        scanf("%s",&numSex);
+        if(numSex == 1){
+        this->sex = MALE;
+    } else if(numSex == 2) {
+        this->sex = FEMALE;
+    }
+}
+void Student::setStudent(){
+    printf("enter your name:\n");
+    cin>>this->name;
+    cin.ignore(1000,'\n');
+    printf("enter your age:\n");
+    scanf("%d",&(this->age));
+    cin.ignore(1000,'\n');
+    this->setSex();
+    cin.ignore(1000,'\n');
+    printf("enter your math score\n");
+    scanf("%f",&(this->mathScore));
+    printf("enter your physical score\n");
+    scanf("%f",&(this->physicalScore));
+    printf("enter your chemistry score\n");
+    scanf("%f",&(this->chemistryScore));
+}
+uint8_t Student::getID(){
+    return this->id;
+}
+string Student::getName(){
+    return this->name;
+}
+string Student::getSex(){
+    if(this->sex == 0){
+        return "MALE";
+    } else return "FEMALE";
+}
+float Student::getAverageScore(){
+    this->averageScore = (this->mathScore + this->physicalScore + this->chemistryScore)/3;
+    return this->averageScore;
+}
+string Student::getClassification(){
+    if(this->averageScore < 5){
+        this->classification = WEAK;
+        return "WEAK";
+    } else if(this->averageScore < 6.5){
+        this->classification = AVERAGE;
+        return "AVERAGE";
+    } else if(this->averageScore < 8){
+        this->classification = GOOD;
+        return "GOOD";
+    } else {
+        this->classification = EXCELLENT;
+        return "EXCELLENT";
+    }
+}
+void Student::getInformationStudent(){
+    printf("**\nName: %s\tID: %d\tAge: %d\tSex: %s\t\nMath score: %f\tPhysical score: %f\tChemistry score: %f\nAverage score: %f\nClassification: %s\n**",this->name.c_str(),this->id,this->age,this->getSex().c_str(),this->mathScore,this->physicalScore,this->chemistryScore,this->getAverageScore(),this->getClassification().c_str());
+}
+
+class StudentManagement{
+    private:
+        vector <Student> database;
+    public:
+        StudentManagement();
+        void addStudent();
+        void updateStudent();
+        void deleteStudent();
+        void searchStudent();
+        void sortNameStudent();
+        void sortGPAStudent();
+        void getListOfStudent();
+};
+uint8_t keyOut = 1;
+StudentManagement::StudentManagement(){
+    uint8_t key;
+    printf("*This is the student management program*\n----------------------\n");
+    do
+    {
+        printf("Click on the appropriate number on the following options:\n");
+        printf("1.Add student.\n2.Update student.\n3.Delete student.\n4.Search student.\n5.Sort the list by GPA of student.\n6.Sort the list by name of student.\n7.Print out the list of students.\n8.Exit.\n");
+        scanf("%d",&key);
+        switch (key)
+        {
+        case 1:
+            this->addStudent();
+            break;
+        case 2:
+            this->updateStudent();
+            break;
+        case 3:
+            this->deleteStudent();
+            break;
+        case 4:
+            this->searchStudent();
+            break;
+        case 5:
+            this->sortGPAStudent();
+            break;
+        case 6:
+            this->sortNameStudent();
+            break;
+        case 7:
+            this->getListOfStudent();
+            break;
+        case 8:
+            keyOut = 0;
+            break;
+        default:
+            break;
+        }
+    } while (keyOut);
+    
+}
+
+void StudentManagement::addStudent(){
+    Student temp;
+    temp.setStudent();
+    database.push_back(temp);
+}
+void StudentManagement::updateStudent(){
+    uint8_t tempID;
+    printf("enter ID of Student who you want to update:\n");
+    scanf("%d",&tempID);
+    for(Student item: database){
+        if(item.getID() == tempID){
+            item.setStudent();
+        }
+    }
+}
+void StudentManagement::deleteStudent(){
+     uint8_t tempID;
+    printf("enter ID of Student who you want to delete:\n");
+    scanf("%d",&tempID);
+    for(int i = 0; i < database.size();i++){
+        if(database[i].getID() == tempID){
+            database.erase(database.begin()+i);
+        }
+    }
+}
+void StudentManagement::searchStudent(){
+    string tempName;
+    printf("enter name of student Who you want to search:\n");
+    cin.ignore(100,'\n');
+    cin>>tempName;
+    for(Student item: database){
+        if(item.getName() == tempName){
+            item.getInformationStudent();
+        }
+    }
+}
+void StudentManagement::sortGPAStudent(){
+    Student tempStudent;
+    for(int i = 0; i < database.size(); i++){
+        for (int j =0; j < database.size(); j++){
+        if(database[j].getAverageScore() > database[j + 1].getAverageScore()){
+            tempStudent = database[j];
+            database[j] = database[j + 1];
+            database[j + 1] = tempStudent;
+        }
+    }
+    }
+}
+void StudentManagement::sortNameStudent(){
+    Student tempStudent;
+    for(int i = 0; i < database.size(); i++){
+        for (int j =0; j < database.size(); j++){
+        if(strcmp(database[j].getName().c_str(),database[j + 1].getName().c_str()) > 0){
+            tempStudent = database[j];
+            database[j] = database[j + 1];
+            database[j + 1] = tempStudent;
+        }
+    }
+    }
+}
+void StudentManagement::getListOfStudent(){
+     for(Student item: database){
+        printf("*List of student*\n-----------------------------");
+        item.getInformationStudent();
+    }
+}
+int main(int argc, char const *argv[])
+{   
+    StudentManagement NQD;
+    return 0;
+}
