@@ -50,8 +50,8 @@ Student::Student(){
     this->averageScore = 0;
     this->classification = WEAK;
 }
-uint8_t numSex;
 void Student::setSex(){
+    int numSex;
     printf("(number 1:Male\nNumber 2:Female)\t\nenter your gender:\n");
         scanf("%s",&numSex);
         if(numSex == 1){
@@ -61,9 +61,9 @@ void Student::setSex(){
     }
 }
 void Student::setStudent(){
-    printf("enter your name:\n");
-    cin>>this->name;
     cin.ignore(1000,'\n');
+    printf("enter your name:\n");
+    getline(cin,this->name);
     printf("enter your age:\n");
     scanf("%d",&(this->age));
     cin.ignore(1000,'\n');
@@ -123,9 +123,9 @@ class StudentManagement{
         void sortGPAStudent();
         void getListOfStudent();
 };
-uint8_t keyOut = 1;
 StudentManagement::StudentManagement(){
-    uint8_t key;
+    int keyOut = 1;
+    int key;
     printf("*This is the student management program*\n----------------------\n");
     do
     {
@@ -135,8 +135,18 @@ StudentManagement::StudentManagement(){
         switch (key)
         {
         case 1:
+            {
+            do{
             this->addStudent();
+            cout<<"1.continue\n2.exit\n";
+            int tempOption;
+            cin>>tempOption;
+            if (tempOption == 2){
+                break;
+            }
+            }while(1);
             break;
+            }
         case 2:
             this->updateStudent();
             break;
@@ -174,9 +184,9 @@ void StudentManagement::updateStudent(){
     uint8_t tempID;
     printf("enter ID of Student who you want to update:\n");
     scanf("%d",&tempID);
-    for(Student item: database){
-        if(item.getID() == tempID){
-            item.setStudent();
+    for(int i = 0; i < database.size();i++){
+        if(database[i].getID() == tempID){
+            database[i].setStudent();
         }
     }
 }
@@ -194,12 +204,13 @@ void StudentManagement::searchStudent(){
     string tempName;
     printf("enter name of student Who you want to search:\n");
     cin.ignore(100,'\n');
-    cin>>tempName;
+    getline(cin,tempName);
     for(Student item: database){
         if(item.getName() == tempName){
             item.getInformationStudent();
         }
     }
+    cout<<"can't find "<<tempName<<" in list of student\n";
 }
 void StudentManagement::sortGPAStudent(){
     Student tempStudent;
@@ -216,12 +227,12 @@ void StudentManagement::sortGPAStudent(){
 void StudentManagement::sortNameStudent(){
     Student tempStudent;
     for(int i = 0; i < database.size(); i++){
-        for (int j =0; j < database.size(); j++){
+        for (int j =0; j < database.size() - 1; j++){
         if(strcmp(database[j].getName().c_str(),database[j + 1].getName().c_str()) > 0){
             tempStudent = database[j];
             database[j] = database[j + 1];
             database[j + 1] = tempStudent;
-        }
+        }else {continue;}
     }
     }
 }
